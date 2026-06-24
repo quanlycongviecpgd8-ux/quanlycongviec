@@ -7,7 +7,1147 @@
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1117"><!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TaskFlow</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f1117">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TaskFlow">
+<!-- Apple touch icon (inline SVG as data URI) -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230f1117'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='110' font-family='sans-serif'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Hệ thống giao việc nội bộ cho team nhỏ">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:       #0f1117;
+    --surface:  #181c27;
+    --card:     #1e2333;
+    --border:   #2a3048;
+    --accent:   #4f8ef7;
+    --accent2:  #38d9a9;
+    --warn:     #f59f00;
+    --danger:   #f03e3e;
+    --text:     #e8eaf0;
+    --muted:    #7a82a0;
+    --label:    #a0a8c0;
+    --radius:   10px;
+    --font:     'Be Vietnam Pro', sans-serif;
+    --mono:     'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── LAYOUT ── */
+  .shell { display: flex; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+  }
+  .logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .logo-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.3px; }
+  .logo-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .nav-section { padding: 0 12px; margin-bottom: 6px; }
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; padding: 0 8px; margin-bottom: 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 7px; cursor: pointer;
+    color: var(--label); font-size: 13px; font-weight: 500;
+    transition: background .15s, color .15s;
+  }
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active { background: rgba(79,142,247,.15); color: var(--accent); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .badge {
+    margin-left: auto; background: var(--danger);
+    color: #fff; font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 99px;
+  }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 16px 20px 0;
+    border-top: 1px solid var(--border);
+  }
+  .user-chip {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+    cursor: pointer; position: relative;
+  }
+  .user-info .name { font-size: 13px; font-weight: 600; }
+  .user-info .role { font-size: 11px; color: var(--muted); }
+
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .topbar h1 { font-size: 16px; font-weight: 700; flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 7px; border: none;
+    font-family: var(--font); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-ghost   { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-danger { background: rgba(240,62,62,.15); color: var(--danger); border: 1px solid rgba(240,62,62,.3); }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* STAT CARDS */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 24px; }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 8px; }
+  .stat-value { font-size: 28px; font-weight: 700; font-family: var(--mono); line-height: 1; }
+  .stat-sub   { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .c-accent  { color: var(--accent); }
+  .c-warn    { color: var(--warn); }
+  .c-danger  { color: var(--danger); }
+  .c-green   { color: var(--accent2); }
+
+  /* SECTION */
+  .section-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .section-title { font-size: 14px; font-weight: 700; }
+  .section-header .spacer { flex: 1; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 99px;
+    border: 1px solid var(--border); background: var(--card);
+    color: var(--label); font-size: 12px; font-weight: 500;
+    cursor: pointer; font-family: var(--font);
+    transition: all .15s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: rgba(79,142,247,.15); border-color: var(--accent); color: var(--accent);
+  }
+  .search-box {
+    flex: 1; max-width: 280px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 7px; padding: 6px 12px;
+    color: var(--text); font-family: var(--font); font-size: 13px;
+    outline: none;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .search-box::placeholder { color: var(--muted); }
+
+  /* TABLE */
+  .table-wrap {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: var(--surface); padding: 10px 16px;
+    text-align: left; font-size: 11px; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .8px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 12px 16px; border-bottom: 1px solid var(--border);
+    vertical-align: middle; font-size: 13px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.025); }
+
+  .task-name { font-weight: 600; color: var(--text); }
+  .task-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* PRIORITY */
+  .prio {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600;
+  }
+  .prio-cao    { background: rgba(240,62,62,.12); color: var(--danger); }
+  .prio-tb     { background: rgba(245,159,0,.12);  color: var(--warn); }
+  .prio-thap   { background: rgba(56,217,169,.12); color: var(--accent2); }
+
+  /* STATUS */
+  .status {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600;
+  }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .s-todo   { background: rgba(122,130,160,.12); color: var(--muted); }
+  .s-doing  { background: rgba(79,142,247,.12);  color: var(--accent); }
+  .s-review { background: rgba(245,159,0,.12);   color: var(--warn); }
+  .s-done   { background: rgba(56,217,169,.12);  color: var(--accent2); }
+  .s-late   { background: rgba(240,62,62,.12);   color: var(--danger); }
+
+  /* DEADLINE */
+  .deadline { font-family: var(--mono); font-size: 12px; }
+  .dl-late   { color: var(--danger); font-weight: 600; }
+  .dl-today  { color: var(--warn);   font-weight: 600; }
+  .dl-soon   { color: var(--accent); }
+  .dl-ok     { color: var(--muted);  }
+
+  /* ASSIGNEE */
+  .assignee { display: flex; align-items: center; gap: 7px; }
+  .av-sm {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+
+  /* PROGRESS BAR */
+  .prog-wrap { display: flex; align-items: center; gap: 8px; }
+  .prog-bar  {
+    flex: 1; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden;
+  }
+  .prog-fill { height: 100%; border-radius: 99px; background: var(--accent2); transition: width .3s; }
+  .prog-pct  { font-size: 11px; font-family: var(--mono); color: var(--muted); min-width: 28px; }
+
+  /* ACTION btns */
+  .actions { display: flex; gap: 6px; }
+
+  /* MODAL */
+  .overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+    z-index: 100; align-items: center; justify-content: center;
+  }
+  .overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; width: 520px; max-width: calc(100vw - 32px);
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp .2s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform: translateY(16px); } }
+  .modal-head {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-head h2 { font-size: 15px; font-weight: 700; }
+  .close-btn {
+    width: 28px; height: 28px; border-radius: 6px; border: none;
+    background: var(--surface); color: var(--muted);
+    cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .close-btn:hover { background: var(--border); color: var(--text); }
+  .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .modal-foot { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+
+  .field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 7px; padding: 8px 12px;
+    color: var(--text); font-family: var(--font); font-size: 13px;
+    outline: none; transition: border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field select option { background: var(--card); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* TOAST */
+  .toast-wrap { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 200; }
+  .toast {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 9px; padding: 12px 16px; min-width: 240px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    animation: toastIn .2s ease;
+  }
+  @keyframes toastIn { from { opacity:0; transform: translateX(16px); } }
+  .toast-icon { font-size: 18px; }
+  .toast-msg  { font-size: 13px; font-weight: 500; }
+  .toast-ok   { border-left: 3px solid var(--accent2); }
+  .toast-warn { border-left: 3px solid var(--warn); }
+
+  /* TABS */
+  .tab-bar { display: flex; gap: 2px; margin-bottom: 20px; background: var(--card); border-radius: 9px; padding: 4px; width: fit-content; border: 1px solid var(--border); }
+  .tab {
+    padding: 6px 16px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    transition: all .15s;
+  }
+  .tab.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,.2); }
+
+  /* KANBAN */
+  .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kol-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .kol-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+  .kol-count { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+  .kol { background: var(--surface); border-radius: var(--radius); padding: 14px; border: 1px solid var(--border); }
+  .k-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-bottom: 8px;
+    cursor: pointer; transition: border-color .15s;
+  }
+  .k-card:hover { border-color: var(--accent); }
+  .k-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .k-meta  { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+
+  /* REPORT */
+  .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .report-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+  .report-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--label); }
+  .bar-item { margin-bottom: 10px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .bar-track { height: 6px; background: var(--border); border-radius: 99px; }
+  .bar-fill  { height: 100%; border-radius: 99px; }
+
+  /* TEAM */
+  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .member-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px;
+  }
+  .av-lg {
+    width: 46px; height: 46px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .member-name  { font-size: 13px; font-weight: 700; }
+  .member-role  { font-size: 11px; color: var(--muted); }
+  .member-tasks { font-size: 11px; margin-top: 4px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+  /* UTILITY */
+  .empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ── BOTTOM NAV (mobile) ── */
+  .bottom-nav {
+    display: none;
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+    z-index: 50;
+  }
+  .bottom-nav-inner { display: flex; justify-content: space-around; }
+  .bn-item {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 4px 12px; border-radius: 8px; cursor: pointer;
+    color: var(--muted); font-size: 10px; font-weight: 600;
+    transition: color .15s; min-width: 56px; position: relative;
+  }
+  .bn-item .bn-icon { font-size: 22px; line-height: 1; }
+  .bn-item.active { color: var(--accent); }
+  .bn-dot {
+    position: absolute; top: 2px; right: 10px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--surface);
+    display: none;
+  }
+  .bn-dot.show { display: block; }
+
+  .fab {
+    display: none;
+    position: fixed; bottom: calc(72px + env(safe-area-inset-bottom)); right: 20px;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    border: none; font-size: 26px; cursor: pointer;
+    box-shadow: 0 4px 20px rgba(79,142,247,.5);
+    align-items: center; justify-content: center;
+    z-index: 51; transition: transform .15s;
+  }
+  .fab:active { transform: scale(.92); }
+
+  @media (max-width: 768px) {
+    .sidebar  { display: none; }
+    .bottom-nav { display: block; }
+    .fab { display: flex; }
+    .topbar { padding: 10px 14px; gap: 8px; }
+    .topbar h1 { font-size: 15px; }
+    #sheets-btn { display: none; }
+    .topbar .btn-primary { display: none; }
+    .topbar .btn-sync { display: none; }
+    .content { padding: 16px 14px calc(80px + env(safe-area-inset-bottom)); }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 12px 14px; }
+    .stat-value { font-size: 22px; }
+    .kanban { grid-template-columns: 1fr; }
+    .report-grid { grid-template-columns: 1fr; }
+    .team-grid { grid-template-columns: repeat(2, 1fr); }
+    .modal { width: 100%; max-width: 100%; border-radius: 20px 20px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-height: 92vh; }
+    .overlay { align-items: flex-end; }
+    th:nth-child(6), td:nth-child(6),
+    th:nth-child(7), td:nth-child(7) { display: none; }
+  }
+  @media (max-width: 400px) {
+    .team-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <div class="bn-item active" id="bn-dashboard" onclick="switchTab('dashboard')">
+      <span class="bn-icon">📊</span>Dashboard
+    </div>
+    <div class="bn-item" id="bn-tasks" onclick="switchTab('tasks')">
+      <span class="bn-icon">📋</span>Việc làm
+      <div class="bn-dot" id="bn-dot-late"></div>
+    </div>
+    <div class="bn-item" id="bn-kanban" onclick="switchTab('kanban')">
+      <span class="bn-icon">🗂️</span>Kanban
+    </div>
+    <div class="bn-item" id="bn-team" onclick="switchTab('team')">
+      <span class="bn-icon">👥</span>Nhân sự
+    </div>
+    <div class="bn-item" id="bn-report" onclick="switchTab('report')">
+      <span class="bn-icon">📈</span>Báo cáo
+    </div>
+    <div class="bn-item" id="bn-settings" onclick="openUrlSetup()">
+      <span class="bn-icon">⚙️</span>Sheets
+      <div class="bn-dot" id="bn-dot-sheets"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- FAB (mobile add button) -->
+<button class="fab" onclick="openModal('add')" aria-label="Giao việc mới">+</button>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-name">⚡ TaskFlow</div>
+      <div class="logo-sub">Hệ thống giao việc nội bộ</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Tổng quan</div>
+      <div class="nav-item active" onclick="switchTab('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="switchTab('tasks')">
+        <span class="icon">📋</span> Danh sách việc
+        <span class="badge" id="badge-late">0</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('kanban')">
+        <span class="icon">🗂️</span> Bảng Kanban
+      </div>
+    </div>
+    <div class="nav-section" style="margin-top:8px">
+      <div class="nav-label">Quản lý</div>
+      <div class="nav-item" onclick="switchTab('team')">
+        <span class="icon">👥</span> Nhân sự
+      </div>
+      <div class="nav-item" onclick="switchTab('report')">
+        <span class="icon">📈</span> Báo cáo
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-chip" onclick="cycleRole()">
+        <div class="avatar" id="sidebar-avatar">QL</div>
+        <div class="user-info">
+          <div class="name" id="sidebar-name">Quản lý</div>
+          <div class="role" id="sidebar-role">Admin · Bấm để đổi</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <button class="btn btn-ghost btn-sm" id="sheets-btn" onclick="openUrlSetup()" style="border-color:var(--border);color:var(--label)">⚙️ Kết nối Sheets</button>
+      <button class="btn btn-ghost btn-sm" onclick="syncFromSheets()" title="Đồng bộ từ Sheets">🔄</button>
+      <button class="btn btn-ghost btn-sm" onclick="checkDeadlines()">🔔 Nhắc deadline</button>
+      <button class="btn btn-primary" onclick="openModal('add')">+ Giao việc mới</button>
+    </div>
+
+    <div class="content" id="content">
+      <!-- rendered by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- MODAL THÊM/SỬA VIỆC -->
+<div class="overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <h2 id="modal-title">Giao việc mới</h2>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Tên công việc *</label>
+        <input id="f-name" type="text" placeholder="VD: Hoàn thành báo cáo tháng 6…">
+      </div>
+      <div class="field">
+        <label>Mô tả</label>
+        <textarea id="f-desc" placeholder="Chi tiết công việc…"></textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Giao cho *</label>
+          <select id="f-assign"></select>
+        </div>
+        <div class="field">
+          <label>Ưu tiên</label>
+          <select id="f-prio">
+            <option value="Cao">🔴 Cao</option>
+            <option value="Trung bình" selected>🟡 Trung bình</option>
+            <option value="Thấp">🟢 Thấp</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Deadline *</label>
+          <input id="f-deadline" type="date">
+        </div>
+        <div class="field">
+          <label>Trạng thái</label>
+          <select id="f-status">
+            <option value="Chưa bắt đầu">⬜ Chưa bắt đầu</option>
+            <option value="Đang thực hiện">🔵 Đang thực hiện</option>
+            <option value="Chờ duyệt">🟡 Chờ duyệt</option>
+            <option value="Hoàn thành">✅ Hoàn thành</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tiến độ: <span id="prog-val">0</span>%</label>
+        <input id="f-prog" type="range" min="0" max="100" value="0" oninput="document.getElementById('prog-val').textContent=this.value" style="width:100%;accent-color:var(--accent)">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+      <button class="btn btn-primary" onclick="saveTask()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<script>
+/* ────────────────────────────── GOOGLE SHEETS CONFIG ────────────────────────────── */
+// 👉 Sau khi deploy Apps Script, dán URL Web App vào đây:
+let APPS_SCRIPT_URL = localStorage.getItem('taskflow_url') || '';
+let useSheets = !!APPS_SCRIPT_URL;
+
+async function apiCall(action, body={}) {
+  if (!APPS_SCRIPT_URL) throw new Error('Chưa cấu hình URL');
+  const url = APPS_SCRIPT_URL + '?action=' + action;
+  const res  = await fetch(url, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...body }),
+  });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || 'Lỗi server');
+  return json.data;
+}
+
+async function syncFromSheets() {
+  if (!useSheets) return;
+  try {
+    showSyncBar('Đang tải dữ liệu từ Google Sheets…');
+    const [remoteTasks, remoteMembers] = await Promise.all([
+      apiCall('getTasks'),
+      apiCall('getMembers'),
+    ]);
+    tasks = remoteTasks;
+    if (remoteMembers && remoteMembers.length) {
+      MEMBERS.length = 0;
+      remoteMembers.forEach(m => MEMBERS.push(m));
+    }
+    hideSyncBar();
+    render();
+    toast('✅ Đã đồng bộ từ Google Sheets');
+  } catch(e) {
+    hideSyncBar();
+    toast('⚠️ Lỗi đồng bộ: ' + e.message, 'warn');
+  }
+}
+
+function showSyncBar(msg) {
+  let bar = document.getElementById('sync-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'sync-bar';
+    bar.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#4f8ef7;color:#fff;text-align:center;padding:8px;font-size:13px;font-weight:600;z-index:300;';
+    document.body.prepend(bar);
+  }
+  bar.textContent = '⏳ ' + msg;
+}
+function hideSyncBar() {
+  const bar = document.getElementById('sync-bar');
+  if (bar) bar.remove();
+}
+
+function openUrlSetup() {
+  const url = prompt('Dán URL Google Apps Script Web App của bạn vào đây:\n(Sau khi deploy, copy URL từ bước 5 trong hướng dẫn)', APPS_SCRIPT_URL);
+  if (url === null) return;
+  if (!url.trim()) {
+    localStorage.removeItem('taskflow_url');
+    APPS_SCRIPT_URL = '';
+    useSheets = false;
+    toast('Đã tắt kết nối Google Sheets', 'warn');
+    updateSheetsBtn();
+    return;
+  }
+  APPS_SCRIPT_URL = url.trim();
+  localStorage.setItem('taskflow_url', APPS_SCRIPT_URL);
+  useSheets = true;
+  updateSheetsBtn();
+  syncFromSheets();
+}
+
+function updateSheetsBtn() {
+  const btn = document.getElementById('sheets-btn');
+  if (btn) {
+    btn.textContent = useSheets ? '🟢 Google Sheets' : '⚙️ Kết nối Sheets';
+    btn.style.borderColor = useSheets ? 'var(--accent2)' : 'var(--border)';
+    btn.style.color       = useSheets ? 'var(--accent2)' : 'var(--label)';
+  }
+  // Cập nhật dot trên mobile bottom nav: xanh = đã kết nối, đỏ = chưa
+  const dot = document.getElementById('bn-dot-sheets');
+  if (dot) {
+    dot.style.background = useSheets ? 'var(--accent2)' : 'var(--danger)';
+    dot.classList.add('show');
+  }
+}
+
+/* ────────────────────────────── DATA ────────────────────────────── */
+const COLORS = ['#4f8ef7','#38d9a9','#f59f00','#f03e3e','#c678dd','#56b6c2','#e06c75','#98c379','#d19a66','#61afef','#abb2bf','#e5c07b','#be5046','#528bff','#2bbac5'];
+
+const MEMBERS = [
+  { id:1, name:'Nguyễn Minh Tuấn', role:'Trưởng nhóm',    dept:'Kinh doanh'  },
+  { id:2, name:'Trần Thị Hoa',     role:'Nhân viên',       dept:'Kế toán'     },
+  { id:3, name:'Lê Văn Đức',       role:'Nhân viên',       dept:'Kỹ thuật'    },
+  { id:4, name:'Phạm Thu Lan',     role:'Trưởng nhóm',     dept:'Marketing'   },
+  { id:5, name:'Hoàng Văn Bình',   role:'Nhân viên',       dept:'Kinh doanh'  },
+  { id:6, name:'Ngô Thị Cẩm',     role:'Nhân viên',       dept:'Hành chính'  },
+  { id:7, name:'Đặng Quang Huy',   role:'Nhân viên',       dept:'Kỹ thuật'    },
+  { id:8, name:'Vũ Thị Mai',       role:'Nhân viên',       dept:'Kế toán'     },
+  { id:9, name:'Bùi Thanh Phong',  role:'Nhân viên',       dept:'Kinh doanh'  },
+  { id:10,name:'Đinh Thị Ngọc',   role:'Nhân viên',       dept:'Marketing'   },
+  { id:11,name:'Lý Hùng Cường',   role:'Nhân viên',       dept:'Kỹ thuật'    },
+  { id:12,name:'Cao Thị Bích',     role:'Nhân viên',       dept:'Hành chính'  },
+  { id:13,name:'Trịnh Văn Nam',    role:'Nhân viên',       dept:'Kinh doanh'  },
+  { id:14,name:'Phan Thị Yến',     role:'Nhân viên',       dept:'Marketing'   },
+  { id:15,name:'Dương Minh Khoa',  role:'Nhân viên',       dept:'Kỹ thuật'    },
+];
+
+const today = new Date();
+const fmt = d => d.toISOString().slice(0,10);
+const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+
+let tasks = [
+  { id:1,  name:'Báo cáo doanh thu tháng 6',   desc:'Tổng hợp số liệu từ các phòng ban', assign:2,  prio:'Cao',        status:'Đang thực hiện', deadline: fmt(addDays(today,-1)),  prog:70 },
+  { id:2,  name:'Cập nhật website công ty',     desc:'Thêm sản phẩm mới vào danh mục',   assign:3,  prio:'Trung bình', status:'Chưa bắt đầu',   deadline: fmt(addDays(today,3)),   prog:0  },
+  { id:3,  name:'Chiến dịch email marketing',   desc:'Gửi email đến 500 khách hàng',     assign:4,  prio:'Cao',        status:'Chờ duyệt',       deadline: fmt(today),              prog:90 },
+  { id:4,  name:'Hợp đồng đối tác Q3',          desc:'Soạn thảo và ký kết hợp đồng',    assign:1,  prio:'Cao',        status:'Đang thực hiện',  deadline: fmt(addDays(today,7)),   prog:50 },
+  { id:5,  name:'Đào tạo nhân viên mới',        desc:'2 nhân viên phòng kinh doanh',     assign:6,  prio:'Thấp',       status:'Hoàn thành',      deadline: fmt(addDays(today,-3)),  prog:100},
+  { id:6,  name:'Fix bug hệ thống ERP',         desc:'Lỗi tính toán thuế VAT',           assign:7,  prio:'Cao',        status:'Đang thực hiện',  deadline: fmt(addDays(today,1)),   prog:60 },
+  { id:7,  name:'Kế hoạch Marketing Q3',        desc:'Ngân sách và kênh triển khai',     assign:10, prio:'Trung bình', status:'Chưa bắt đầu',   deadline: fmt(addDays(today,10)),  prog:0  },
+  { id:8,  name:'Quyết toán thuế GTGT',         desc:'Nộp báo cáo cho cơ quan thuế',    assign:8,  prio:'Cao',        status:'Hoàn thành',      deadline: fmt(addDays(today,-5)),  prog:100},
+  { id:9,  name:'Tuyển dụng kỹ sư backend',     desc:'Đăng tin và phỏng vấn ứng viên',  assign:6,  prio:'Trung bình', status:'Đang thực hiện',  deadline: fmt(addDays(today,14)),  prog:30 },
+  { id:10, name:'Bảo trì máy chủ tháng 6',     desc:'Backup dữ liệu và update OS',     assign:11, prio:'Trung bình', status:'Chưa bắt đầu',   deadline: fmt(addDays(today,5)),   prog:0  },
+];
+
+let nextId = 11;
+let editId = null;
+let currentTab = 'dashboard';
+let filterStatus = 'all';
+let searchQ = '';
+let currentRoleIdx = 0;
+const roles = [{name:'Quản lý', init:'QL'},{name:'Trưởng nhóm', init:'TN'},{name:'Nhân viên', init:'NV'}];
+
+/* ────────────────────────────── HELPERS ────────────────────────────── */
+function initials(name){ return name.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase(); }
+function memberById(id){ return MEMBERS.find(m=>m.id===id)||{name:'Chưa giao',id:0}; }
+function color(id){ return COLORS[(id-1)%COLORS.length]; }
+
+function deadlineClass(dl){
+  const d = new Date(dl+'T00:00:00');
+  const diff = Math.ceil((d-today)/(86400000));
+  if(diff<0)  return 'dl-late';
+  if(diff===0) return 'dl-today';
+  if(diff<=3)  return 'dl-soon';
+  return 'dl-ok';
+}
+function deadlineLabel(dl){
+  const d = new Date(dl+'T00:00:00');
+  const diff = Math.ceil((d-today)/(86400000));
+  if(diff<0)  return `Trễ ${Math.abs(diff)} ngày ⚠️`;
+  if(diff===0) return 'Hôm nay 🔔';
+  if(diff===1) return 'Ngày mai';
+  return dl.split('-').reverse().join('/');
+}
+
+function statusCls(s){
+  if(s==='Chưa bắt đầu')  return 's-todo';
+  if(s==='Đang thực hiện') return 's-doing';
+  if(s==='Chờ duyệt')     return 's-review';
+  if(s==='Hoàn thành')    return 's-done';
+  return 's-todo';
+}
+function prioCls(p){
+  if(p==='Cao')        return 'prio-cao';
+  if(p==='Trung bình') return 'prio-tb';
+  return 'prio-thap';
+}
+
+function toast(msg, type='ok'){
+  const w = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span class="toast-icon">${type==='ok'?'✅':'⚠️'}</span><span class="toast-msg">${msg}</span>`;
+  w.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+
+/* ────────────────────────────── TABS ────────────────────────────── */
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.getAttribute('onclick')===`switchTab('${tab}')`);
+  });
+  // Update bottom nav
+  ['dashboard','tasks','kanban','team','report'].forEach(t=>{
+    const el = document.getElementById('bn-'+t);
+    if(el) el.classList.toggle('active', t===tab);
+  });
+  const titles = {dashboard:'Dashboard',tasks:'Danh sách công việc',kanban:'Bảng Kanban',team:'Nhân sự',report:'Báo cáo'};
+  document.getElementById('page-title').textContent = titles[tab]||tab;
+  render();
+}
+
+/* ────────────────────────────── RENDER ────────────────────────────── */
+function render(){
+  const c = document.getElementById('content');
+  if(currentTab==='dashboard') c.innerHTML = renderDashboard();
+  else if(currentTab==='tasks') c.innerHTML = renderTaskList();
+  else if(currentTab==='kanban') c.innerHTML = renderKanban();
+  else if(currentTab==='team') c.innerHTML = renderTeam();
+  else if(currentTab==='report') c.innerHTML = renderReport();
+
+  // update badge
+  const late = tasks.filter(t=>t.status!=='Hoàn thành'&&new Date(t.deadline+'T00:00:00')<today).length;
+  document.getElementById('badge-late').textContent = late||'';
+  document.getElementById('badge-late').style.display = late?'':'none';
+  // update mobile bottom nav dot
+  const dot = document.getElementById('bn-dot-late');
+  if(dot) dot.classList.toggle('show', late>0);
+}
+
+/* ── DASHBOARD ── */
+function renderDashboard(){
+  const total = tasks.length;
+  const done  = tasks.filter(t=>t.status==='Hoàn thành').length;
+  const doing = tasks.filter(t=>t.status==='Đang thực hiện').length;
+  const late  = tasks.filter(t=>t.status!=='Hoàn thành'&&new Date(t.deadline+'T00:00:00')<today).length;
+  const todayTasks = tasks.filter(t=>t.deadline===fmt(today)&&t.status!=='Hoàn thành');
+
+  const urgentRows = tasks
+    .filter(t=>t.status!=='Hoàn thành')
+    .sort((a,b)=>new Date(a.deadline)-new Date(b.deadline))
+    .slice(0,5)
+    .map(t=>{
+      const m = memberById(t.assign);
+      return `<tr>
+        <td><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></td>
+        <td><div class="assignee"><div class="av-sm" style="background:${color(m.id)}">${initials(m.name)}</div>${m.name.split(' ').slice(-1)[0]}</div></td>
+        <td><span class="prio ${prioCls(t.prio)}">${t.prio}</span></td>
+        <td><span class="deadline ${deadlineClass(t.deadline)}">${deadlineLabel(t.deadline)}</span></td>
+        <td><span class="status ${statusCls(t.status)}">${t.status}</span></td>
+      </tr>`;
+    }).join('');
+
+  return `
+  <div class="stats">
+    <div class="stat-card"><div class="stat-label">Tổng công việc</div><div class="stat-value c-accent">${total}</div><div class="stat-sub">Toàn bộ nhiệm vụ</div></div>
+    <div class="stat-card"><div class="stat-label">Hoàn thành</div><div class="stat-value c-green">${done}</div><div class="stat-sub">${Math.round(done/total*100)||0}% tổng số</div></div>
+    <div class="stat-card"><div class="stat-label">Đang thực hiện</div><div class="stat-value c-accent">${doing}</div><div class="stat-sub">Đang xử lý</div></div>
+    <div class="stat-card"><div class="stat-label">Quá hạn ⚠️</div><div class="stat-value c-danger">${late}</div><div class="stat-sub">Cần xử lý ngay</div></div>
+  </div>
+
+  ${todayTasks.length?`<div style="background:rgba(245,159,0,.08);border:1px solid rgba(245,159,0,.3);border-radius:${10}px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:18px">🔔</span>
+    <span style="font-size:13px"><strong>Hôm nay có ${todayTasks.length} việc đến hạn:</strong> ${todayTasks.map(t=>t.name).join(', ')}</span>
+  </div>`:''}
+
+  <div class="section-header">
+    <div class="section-title">Việc cần ưu tiên</div>
+    <div class="spacer"></div>
+    <button class="btn btn-ghost btn-sm" onclick="switchTab('tasks')">Xem tất cả →</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Công việc</th><th>Người thực hiện</th><th>Ưu tiên</th><th>Deadline</th><th>Trạng thái</th></tr></thead>
+      <tbody>${urgentRows||'<tr><td colspan="5" class="empty">Không có việc nào cần ưu tiên 🎉</td></tr>'}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ── TASK LIST ── */
+function renderTaskList(){
+  let filtered = tasks;
+  if(filterStatus!=='all') filtered = filtered.filter(t=>t.status===filterStatus);
+  if(searchQ) filtered = filtered.filter(t=>t.name.toLowerCase().includes(searchQ.toLowerCase())||memberById(t.assign).name.toLowerCase().includes(searchQ.toLowerCase()));
+
+  const rows = filtered.map(t=>{
+    const m = memberById(t.assign);
+    return `<tr>
+      <td><div class="task-name">${t.name}</div><div class="task-desc">${t.desc}</div></td>
+      <td><div class="assignee"><div class="av-sm" style="background:${color(m.id)}">${initials(m.name)}</div>${m.name}</div></td>
+      <td><span class="prio ${prioCls(t.prio)}">${t.prio}</span></td>
+      <td><span class="deadline ${deadlineClass(t.deadline)}">${deadlineLabel(t.deadline)}</span></td>
+      <td><span class="status ${statusCls(t.status)}">${t.status}</span></td>
+      <td>
+        <div class="prog-wrap">
+          <div class="prog-bar"><div class="prog-fill" style="width:${t.prog}%"></div></div>
+          <div class="prog-pct">${t.prog}%</div>
+        </div>
+      </td>
+      <td>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" onclick="openModal('edit',${t.id})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const statuses = ['all','Chưa bắt đầu','Đang thực hiện','Chờ duyệt','Hoàn thành'];
+  const labels   = {all:'Tất cả','Chưa bắt đầu':'Chưa bắt đầu','Đang thực hiện':'Đang thực hiện','Chờ duyệt':'Chờ duyệt','Hoàn thành':'Hoàn thành'};
+
+  return `
+  <div class="filters">
+    ${statuses.map(s=>`<button class="filter-btn ${filterStatus===s?'active':''}" onclick="setFilter('${s}')">${labels[s]} (${s==='all'?tasks.length:tasks.filter(t=>t.status===s).length})</button>`).join('')}
+    <input class="search-box" placeholder="🔍 Tìm việc, nhân viên…" value="${searchQ}" oninput="setSearch(this.value)">
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Công việc</th><th>Người thực hiện</th><th>Ưu tiên</th><th>Deadline</th><th>Trạng thái</th><th>Tiến độ</th><th>Hành động</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="7"><div class="empty"><div class="empty-icon">📭</div>Không có công việc nào</div></td></tr>'}</tbody>
+    </table>
+  </div>`;
+}
+
+function setFilter(s){ filterStatus=s; render(); }
+function setSearch(v){ searchQ=v; render(); }
+
+/* ── KANBAN ── */
+function renderKanban(){
+  const cols = ['Chưa bắt đầu','Đang thực hiện','Chờ duyệt','Hoàn thành'];
+  const colColors = {'Chưa bắt đầu':'var(--muted)','Đang thực hiện':'var(--accent)','Chờ duyệt':'var(--warn)','Hoàn thành':'var(--accent2)'};
+
+  const cols_html = cols.map(col=>{
+    const items = tasks.filter(t=>t.status===col);
+    const cards = items.map(t=>{
+      const m = memberById(t.assign);
+      return `<div class="k-card" onclick="openModal('edit',${t.id})">
+        <div class="k-title">${t.name}</div>
+        <span class="prio ${prioCls(t.prio)}">${t.prio}</span>
+        <div class="k-meta">
+          <div class="assignee"><div class="av-sm" style="background:${color(m.id)}">${initials(m.name)}</div><span style="font-size:11px;color:var(--muted)">${m.name.split(' ').slice(-1)[0]}</span></div>
+          <span class="deadline ${deadlineClass(t.deadline)}" style="font-size:11px">${deadlineLabel(t.deadline)}</span>
+        </div>
+        <div class="prog-wrap" style="margin-top:8px">
+          <div class="prog-bar"><div class="prog-fill" style="width:${t.prog}%"></div></div>
+          <div class="prog-pct">${t.prog}%</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="kol">
+      <div class="kol-head">
+        <div class="kol-title" style="color:${colColors[col]}">${col}</div>
+        <div class="kol-count">${items.length}</div>
+      </div>
+      ${cards||`<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Không có việc</div>`}
+    </div>`;
+  }).join('');
+
+  return `<div class="kanban">${cols_html}</div>`;
+}
+
+/* ── TEAM ── */
+function renderTeam(){
+  const cards = MEMBERS.map((m,i)=>{
+    const myTasks = tasks.filter(t=>t.assign===m.id);
+    const done = myTasks.filter(t=>t.status==='Hoàn thành').length;
+    const late = myTasks.filter(t=>t.status!=='Hoàn thành'&&new Date(t.deadline+'T00:00:00')<today).length;
+    return `<div class="member-card">
+      <div class="av-lg" style="background:${color(m.id)}">${initials(m.name)}</div>
+      <div class="member-name">${m.name}</div>
+      <div class="member-role">${m.role} · ${m.dept}</div>
+      <div class="member-tasks">
+        📋 ${myTasks.length} việc &nbsp;
+        ✅ ${done} xong
+        ${late?`&nbsp; <span style="color:var(--danger)">⚠️ ${late} trễ</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="section-header"><div class="section-title">Danh sách nhân sự (${MEMBERS.length} người)</div></div>
+  <div class="team-grid">${cards}</div>`;
+}
+
+/* ── REPORT ── */
+function renderReport(){
+  const total = tasks.length;
+  const byStatus = {};
+  const byPrio   = {};
+  tasks.forEach(t=>{
+    byStatus[t.status] = (byStatus[t.status]||0)+1;
+    byPrio[t.prio]   = (byPrio[t.prio]||0)+1;
+  });
+
+  const topMembers = MEMBERS.map(m=>({
+    ...m,
+    cnt: tasks.filter(t=>t.assign===m.id).length,
+    done: tasks.filter(t=>t.assign===m.id&&t.status==='Hoàn thành').length,
+  })).sort((a,b)=>b.cnt-a.cnt).slice(0,6);
+
+  const statusBars = Object.entries(byStatus).map(([s,n])=>`
+    <div class="bar-item">
+      <div class="bar-label"><span>${s}</span><span>${n}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/total*100)}%;background:var(--accent)"></div></div>
+    </div>`).join('');
+
+  const prioBars = [['Cao',byPrio['Cao']||0,'var(--danger)'],['Trung bình',byPrio['Trung bình']||0,'var(--warn)'],['Thấp',byPrio['Thấp']||0,'var(--accent2)']].map(([p,n,c])=>`
+    <div class="bar-item">
+      <div class="bar-label"><span>${p}</span><span>${n}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/total*100)}%;background:${c}"></div></div>
+    </div>`).join('');
+
+  const memberBars = topMembers.map(m=>`
+    <div class="bar-item">
+      <div class="bar-label"><span>${m.name.split(' ').slice(-2).join(' ')}</span><span>${m.done}/${m.cnt}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${m.cnt?Math.round(m.done/m.cnt*100):0}%;background:${color(m.id)}"></div></div>
+    </div>`).join('');
+
+  const late  = tasks.filter(t=>t.status!=='Hoàn thành'&&new Date(t.deadline+'T00:00:00')<today).length;
+  const avgProg = Math.round(tasks.reduce((s,t)=>s+t.prog,0)/total)||0;
+
+  return `
+  <div class="stats" style="margin-bottom:20px">
+    <div class="stat-card"><div class="stat-label">Hoàn thành</div><div class="stat-value c-green">${byStatus['Hoàn thành']||0}/${total}</div><div class="stat-sub">Tỉ lệ ${Math.round((byStatus['Hoàn thành']||0)/total*100)}%</div></div>
+    <div class="stat-card"><div class="stat-label">Tiến độ TB</div><div class="stat-value c-accent">${avgProg}%</div><div class="stat-sub">Toàn bộ việc</div></div>
+    <div class="stat-card"><div class="stat-label">Quá hạn</div><div class="stat-value c-danger">${late}</div><div class="stat-sub">Cần xử lý</div></div>
+    <div class="stat-card"><div class="stat-label">Nhân sự</div><div class="stat-value c-accent">${MEMBERS.length}</div><div class="stat-sub">Đang hoạt động</div></div>
+  </div>
+  <div class="report-grid">
+    <div class="report-card"><h3>Theo trạng thái</h3>${statusBars}</div>
+    <div class="report-card"><h3>Theo ưu tiên</h3>${prioBars}</div>
+    <div class="report-card" style="grid-column:1/-1"><h3>Hiệu suất nhân sự (hoàn thành / tổng việc)</h3>${memberBars}</div>
+  </div>`;
+}
+
+/* ────────────────────────────── MODAL ────────────────────────────── */
+function openModal(mode, id=null){
+  editId = id;
+  document.getElementById('modal-title').textContent = mode==='add'?'Giao việc mới':'Chỉnh sửa công việc';
+
+  // populate assignee select
+  const sel = document.getElementById('f-assign');
+  sel.innerHTML = MEMBERS.map(m=>`<option value="${m.id}">${m.name} · ${m.dept}</option>`).join('');
+
+  if(mode==='edit'&&id){
+    const t = tasks.find(x=>x.id===id);
+    if(!t) return;
+    document.getElementById('f-name').value     = t.name;
+    document.getElementById('f-desc').value     = t.desc;
+    document.getElementById('f-assign').value   = t.assign;
+    document.getElementById('f-prio').value     = t.prio;
+    document.getElementById('f-deadline').value = t.deadline;
+    document.getElementById('f-status').value   = t.status;
+    document.getElementById('f-prog').value     = t.prog;
+    document.getElementById('prog-val').textContent = t.prog;
+  } else {
+    document.getElementById('f-name').value     = '';
+    document.getElementById('f-desc').value     = '';
+    document.getElementById('f-deadline').value = fmt(addDays(today,7));
+    document.getElementById('f-prio').value     = 'Trung bình';
+    document.getElementById('f-status').value   = 'Chưa bắt đầu';
+    document.getElementById('f-prog').value     = 0;
+    document.getElementById('prog-val').textContent = 0;
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function saveTask(){
+  const name = document.getElementById('f-name').value.trim();
+  const deadline = document.getElementById('f-deadline').value;
+  if(!name){ toast('Vui lòng nhập tên công việc','warn'); return; }
+  if(!deadline){ toast('Vui lòng chọn deadline','warn'); return; }
+
+  const data = {
+    name,
+    desc:     document.getElementById('f-desc').value.trim(),
+    assign:   +document.getElementById('f-assign').value,
+    prio:     document.getElementById('f-prio').value,
+    status:   document.getElementById('f-status').value,
+    deadline,
+    prog:     +document.getElementById('f-prog').value,
+  };
+
+  if(editId){
+    const idx = tasks.findIndex(t=>t.id===editId);
+    tasks[idx] = {...tasks[idx],...data};
+    toast('Đã cập nhật công việc');
+    if(useSheets) apiCall('updateTask',{id:editId,...data}).catch(e=>toast('⚠️ Chưa đồng bộ Sheets: '+e.message,'warn'));
+  } else {
+    const newTask = {id:nextId++,...data};
+    tasks.push(newTask);
+    toast('Đã giao việc thành công');
+    if(useSheets) apiCall('addTask',newTask).catch(e=>toast('⚠️ Chưa đồng bộ Sheets: '+e.message,'warn'));
+  }
+  document.getElementById('modal-overlay').classList.remove('open');
+  render();
+}
+
+function deleteTask(id){
+  if(!confirm('Xóa công việc này?')) return;
+  if(useSheets) apiCall('deleteTask',{id}).catch(e=>toast('⚠️ Chưa đồng bộ Sheets: '+e.message,'warn'));
+  tasks = tasks.filter(t=>t.id!==id);
+  toast('Đã xóa công việc','warn');
+  render();
+}
+
+/* ────────────────────────────── DEADLINE REMINDER ────────────────────────────── */
+function checkDeadlines(){
+  const late = tasks.filter(t=>t.status!=='Hoàn thành'&&new Date(t.deadline+'T00:00:00')<today);
+  const todayTasks = tasks.filter(t=>t.deadline===fmt(today)&&t.status!=='Hoàn thành');
+  const soon = tasks.filter(t=>{
+    const diff = Math.ceil((new Date(t.deadline+'T00:00:00')-today)/86400000);
+    return diff>0&&diff<=3&&t.status!=='Hoàn thành';
+  });
+
+  if(late.length)  toast(`⚠️ ${late.length} việc quá hạn cần xử lý ngay!`,'warn');
+  if(todayTasks.length) toast(`🔔 ${todayTasks.length} việc đến hạn HÔM NAY`,'warn');
+  if(soon.length)  toast(`⏰ ${soon.length} việc sẽ đến hạn trong 3 ngày tới`,'ok');
+  if(!late.length&&!todayTasks.length&&!soon.length) toast('✅ Không có việc cấp bách nào!','ok');
+
+  if(useSheets && (late.length||todayTasks.length||soon.length)){
+    apiCall('sendReminder')
+      .then(r=>toast(`📧 Đã gửi email nhắc deadline cho ${r.sent} nhân viên`,'ok'))
+      .catch(e=>toast('⚠️ Gửi email thất bại: '+e.message,'warn'));
+  }
+}
+
+/* ────────────────────────────── ROLE SWITCHER ────────────────────────────── */
+function cycleRole(){
+  currentRoleIdx = (currentRoleIdx+1)%roles.length;
+  const r = roles[currentRoleIdx];
+  document.getElementById('sidebar-name').textContent = r.name;
+  document.getElementById('sidebar-avatar').textContent = r.init;
+  toast(`Đang xem với quyền: ${r.name}`,'ok');
+}
+
+/* ────────────────────────────── PWA SERVICE WORKER ────────────────────────────── */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(()=>console.log('SW registered'))
+      .catch(e=>console.log('SW error:', e));
+  });
+}
+
+// Install prompt for Android
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner after 3s
+  setTimeout(showInstallBanner, 3000);
+});
+
+function showInstallBanner(){
+  if(!deferredPrompt) return;
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = 'position:fixed;bottom:80px;left:12px;right:12px;background:var(--card);border:1px solid var(--accent);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.4)';
+  banner.innerHTML = `
+    <span style="font-size:28px">⚡</span>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:700">Cài TaskFlow lên máy</div>
+      <div style="font-size:11px;color:var(--muted)">Dùng như app thật, không cần mạng</div>
+    </div>
+    <button onclick="installPWA()" style="background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer">Cài</button>
+    <button onclick="document.getElementById('install-banner').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 4px">✕</button>`;
+  document.body.appendChild(banner);
+}
+
+async function installPWA(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const {outcome} = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  const b = document.getElementById('install-banner');
+  if(b) b.remove();
+  if(outcome==='accepted') toast('🎉 TaskFlow đã được cài lên máy!');
+}
+
+/* ────────────────────────────── INIT ────────────────────────────── */
+render();
+updateSheetsBtn();
+if(useSheets) syncFromSheets();
+</script>
+</body>
+</html>
+
 <meta name="mobile-web-app-capab<!DOCTYPE html>
 <html lang="vi">
 <head>
