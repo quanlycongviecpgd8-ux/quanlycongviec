@@ -5,7 +5,49 @@
   "start_url": "./quan-ly-cong-viec.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",{
+  "name": "TaskFlow — Giao Việc Nội Bộ",
+  "short_name": "TaskFlow",
+  "description": "Hệ thống giao việc nội bộ cho team nhỏ",
+  "start_url": "./quan-ly-cong-viec.html",
+  "scope": "./",
+  "display": "standalone",
   "orientation": "portrait-primary",
+  "background_color": "#0f1117",
+  "theme_color": "#0f1117",
+  "lang": "vi",
+  "categories": ["productivity", "business"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230f1117'/%3E%3Ctext x='96' y='130' text-anchor='middle' font-size='110' font-family='sans-serif'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f1117'/%3E%3Ctext x='256' y='350' text-anchor='middle' font-size='300' font-family='sans-serif'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Giao việc mới",
+      "short_name": "Giao việc",
+      "description": "Tạo công việc mới nhanh",
+      "url": "./quan-ly-cong-viec.html#new",
+      "icons": [{ "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ctext y='80' font-size='80'%3E%2B%3C/text%3E%3C/svg%3E", "sizes": "96x96" }]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "./quan-ly-cong-viec.html#dashboard",
+      "icons": [{ "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Ctext y='80' font-size='80'%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E", "sizes": "96x96" }]
+    }
+  ]
+}
+
   "background_color": "#0f1117",
   "theme_color": "#0f1117",
   "lang": "vi",
